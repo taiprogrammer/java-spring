@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.List;
+
 @RestController
 @RequestMapping("/planetas")
 public class PlanetaController {
@@ -40,14 +43,14 @@ public class PlanetaController {
     }
 
     @PostMapping
-    public ResponseEntity postPlaneta(@RequestBody Planeta novoPlaneta) {
+    public ResponseEntity postPlaneta(@RequestBody @Valid Planeta novoPlaneta) {
         repository.save(novoPlaneta);
         return ResponseEntity.status(201).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity putPlanetaId(@PathVariable int id,
-                                       @RequestBody Planeta planetaAtualizado) {
+                                       @RequestBody @Valid Planeta planetaAtualizado) {
         if (repository.existsById(id)) {
             planetaAtualizado.setId(id);
             repository.save(planetaAtualizado);
@@ -55,6 +58,17 @@ public class PlanetaController {
         }
         else {
             return ResponseEntity.status(404).build();
+        }
+    }
+
+    @GetMapping("/mais-distantes")
+    public ResponseEntity getPlanetasMaisDistantes() {
+        List<Planeta> planetas = repository.findByDistanciaSolKmGreaterThan(500_000);
+        if (planetas.isEmpty()) {
+            return ResponseEntity.status(204).build();
+        }
+        else {
+            return ResponseEntity.status(200).body(planetas);
         }
     }
 }

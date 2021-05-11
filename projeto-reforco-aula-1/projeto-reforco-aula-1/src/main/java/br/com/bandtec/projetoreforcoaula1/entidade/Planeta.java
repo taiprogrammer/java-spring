@@ -7,10 +7,10 @@ import javax.persistence.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Entity
-@Valid
 public class Planeta {
 
     @Id
@@ -22,7 +22,6 @@ public class Planeta {
     @NotBlank
     private String tipo;
     @NotNull
-    @Size(min = 10)
     private Integer distanciaSolKm;
 
     //Getter e setter
