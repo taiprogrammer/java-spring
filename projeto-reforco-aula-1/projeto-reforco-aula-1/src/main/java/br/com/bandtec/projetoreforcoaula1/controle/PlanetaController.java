@@ -63,12 +63,40 @@ public class PlanetaController {
 
     @GetMapping("/mais-distantes")
     public ResponseEntity getPlanetasMaisDistantes() {
-        List<Planeta> planetas = repository.findByDistanciaSolKmGreaterThan(500_000);
+//        List<Planeta> planetas = repository.findByDistanciaSolKmGreaterThan(500_000);
+        List<Planeta> planetas = repository.pesquisarMaisDistantes();
         if (planetas.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
         else {
             return ResponseEntity.status(200).body(planetas);
+        }
+    }
+
+    @PatchMapping("/afastar/{id}/{distanciaAMais}")
+    public ResponseEntity pathPlanetas(@PathVariable int id,
+                                       @PathVariable Integer distanciaAMais){
+        if (repository.existsById(id)) {
+            Planeta planeta = repository.findById(id).get();
+            planeta.setDistanciaSolKm(planeta.getDistanciaSolKm() + distanciaAMais);
+            repository.save(planeta);
+            return ResponseEntity.status(200).build();
+        } else {
+            return ResponseEntity.status(404).build();
+        }
+    }
+
+    @PatchMapping("/sair-orbita-sol/{id}")
+    public ResponseEntity pathOrbitaPlaneta(@PathVariable int id) {
+        if (repository.existsById(id)) {
+            Planeta planeta = repository.findById(id).get();
+            planeta.setDistanciaSolKm(9999999);
+            planeta.setTipo("Perdidão");
+            repository.save(planeta);
+            return ResponseEntity.status(200).build();
+        }
+        else {
+            return ResponseEntity.status(404).build();
         }
     }
 }
